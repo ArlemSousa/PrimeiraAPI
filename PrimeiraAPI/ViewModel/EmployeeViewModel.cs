@@ -7,7 +7,7 @@ namespace PrimeiraAPI.ViewModel
         public string Name { get; set; }
         public int Age { get; set; }
 
-        public int id { get; set; }
+        //public int id { get; set; }
 
         public IFormFile photo { get; set; } 
 
