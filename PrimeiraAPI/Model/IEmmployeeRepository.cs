@@ -6,6 +6,9 @@
 
         List<Employee> GetAll();
 
+        Employee? Get (int id);
+
+
     }
 }
 

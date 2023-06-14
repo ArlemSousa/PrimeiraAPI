@@ -8,7 +8,7 @@ namespace PrimeiraAPI.Model
     public class Employee
     {
         [Key]
-        //public int id { get; private set; }
+        public int id { get; private set; }
 
         public string name { get; private set; }
 

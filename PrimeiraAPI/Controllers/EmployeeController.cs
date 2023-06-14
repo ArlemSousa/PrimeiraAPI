@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,22 +15,28 @@ namespace PrimeiraAPI.Controllers
     {
        
 
-        private readonly IEmmployeeRepository _emmployeeRepository;
+        private readonly IEmmployeeRepository _employeeRepository;
 
         //construtor
         public EmployeeController(IEmmployeeRepository emmployeeRepository)
         {
-            _emmployeeRepository = emmployeeRepository;
+            _employeeRepository = emmployeeRepository;
         }
 
         [HttpPost]
-        public IActionResult Add(EmployeeViewModel employeeView)
+        public IActionResult Add([FromForm] EmployeeViewModel employeeView)
         {
+            //caminho onde estou salvando a foto
+            var filePath = Path.Combine("Storage", employeeView.photo.FileName);
 
-            var employee = new Employee(employeeView.Name, employeeView.Age, null);
+            using FileStream fileStream = new FileStream(filePath, FileMode.Create);
+            employeeView.photo.CopyTo(fileStream);
+
+            var employee = new Employee(employeeView.Name, employeeView.Age, filePath);
+
 
             //para adicionar eu chamo o meu repository e passo o meu var
-            _emmployeeRepository.Add(employee);
+            _employeeRepository.Add(employee);
 
             return Ok();
         }
@@ -37,9 +44,21 @@ namespace PrimeiraAPI.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var employees = _emmployeeRepository.GetAll();
+            var employees = _employeeRepository.GetAll();
             return Ok(employees);
         }
+
+
+        [HttpPost]
+        [Route("{id}/download")]
+        public IActionResult DownloadPhoto(int id)
+        {
+            var employee = _employeeRepository.Get(id);
+            var dataBytes = System.IO.File.ReadAllBytes(employee.photo);
+            return File(dataBytes, "image/png");
+        }
+
+
     }
 
    
