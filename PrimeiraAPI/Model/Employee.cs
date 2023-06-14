@@ -14,7 +14,7 @@ namespace PrimeiraAPI.Model
 
         public int age { get; private set; }
        
-        public string photo { get; private set; }
+        public string? photo { get; private set; }
 
 
         public Employee(string name, int age, string photo)
